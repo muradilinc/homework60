@@ -3,7 +3,7 @@ import {parseDate} from '../../../utils/dateParser';
 import {MessageItem} from '../../../types';
 
 interface Props {
-  message: MessageItem
+  message: MessageItem;
 }
 const MyMessage: React.FC<Props> = ({message}) => {
   return (

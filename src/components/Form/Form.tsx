@@ -17,6 +17,7 @@ const Form: React.FC<Props> = ({textMessage, changeText, sendMessage}) => {
           className="w-full p-3 outline-0 rounded-2xl"
           type="text"
           placeholder="Message"
+          required
         />
       </div>
       <div className="flex justify-end">

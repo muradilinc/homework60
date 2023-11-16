@@ -25,7 +25,7 @@ const ChatWindow: React.FC<Props> = ({messages, changeText, textMessage, sendMes
             messages.length !== 0 && localStorage.getItem('user') ?
               messages.map(message => {
                 if(JSON.parse(localStorage.getItem('user') || '') === message.author){
-                  return <MyMessage message={message}/>;
+                  return <MyMessage key={message._id} message={message}/>;
                 }else {
                   return <MemoedMessage key={message._id} message={message}/>;
                 }

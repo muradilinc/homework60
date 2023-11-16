@@ -3,7 +3,7 @@ import {MessageItem} from '../../../types';
 import {parseDate} from '../../../utils/dateParser';
 
 interface Props {
-  message: MessageItem
+  message: MessageItem;
 }
 
 const MemoedMessage: React.FC<Props> = React.memo(function Message({message}) {
