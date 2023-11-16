@@ -1,10 +1,10 @@
+import React, {useEffect, useState} from 'react';
+import axios from 'axios';
 import Header from '../../components/UI/Header/Header';
 import ChatWindow from '../../components/UI/ChatWindow/ChatWindow';
-import React, {useCallback, useEffect, useState} from 'react';
-import axios from 'axios';
-import {BASE_URL} from '../../constanst/constanst';
-import {MessageItem} from '../../types';
 import Modal from '../../components/UI/Modal/Modal';
+import {MessageItem} from '../../types';
+import {BASE_URL} from '../../constanst/constanst';
 
 const App = () => {
   const [showModal, setShowModal] = useState(true);

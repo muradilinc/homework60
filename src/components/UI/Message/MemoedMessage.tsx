@@ -11,8 +11,8 @@ const MemoedMessage: React.FC<Props> = React.memo(function Message({message}) {
   const textColors = {color: `#${colors[Math.floor(Math.random() * colors.length)]}`};
 
   return (
-    <div className="container mx-auto relative">
-      <div className="bg-white relative inline-block rounded my-3 ml-2 p-4">
+    <div className="relative">
+      <div className="bg-white relative inline-block rounded my-3 mx-2 p-4">
         <h3 style={textColors} className="my-0.5">{message.author}</h3>
         <div className="flex justify-between">
           <p className="max-w-[85%]">{message.message}</p>
