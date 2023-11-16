@@ -6,7 +6,6 @@ interface Props extends React.PropsWithChildren {
 }
 
 const Modal: React.FC<Props> = ({show, title, children}) => {
-
   return (
     <>
       {

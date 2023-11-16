@@ -1,6 +1,6 @@
 import Header from '../../components/UI/Header/Header';
 import ChatWindow from '../../components/UI/ChatWindow/ChatWindow';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import axios from 'axios';
 import {BASE_URL} from '../../constanst/constanst';
 import {MessageItem} from '../../types';
@@ -9,9 +9,9 @@ import Modal from '../../components/UI/Modal/Modal';
 const App = () => {
   const [showModal, setShowModal] = useState(true);
   const [messages, setMessages] = useState<MessageItem[]>([]);
-  const [message, setMessage] = useState({});
   const [textMessage, setTextMessage] = useState('');
   const [author, setAuthor] = useState('');
+  const [lastMessage, setLastMessage] = useState<MessageItem>();
 
 
   const textMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,38 +22,66 @@ const App = () => {
     setAuthor(event.target.value);
   };
 
-  const createUserId = () => {
-    const id = Math.random();
-    localStorage.setItem('user', JSON.stringify(id));
-  };
-
   const closeModal = (event: React.FormEvent) => {
     event.preventDefault();
+    if (!localStorage.getItem('user')) {
+      localStorage.setItem('user', JSON.stringify(author));
+    }
     setShowModal(false);
   };
 
-  useEffect(() => {
-    if (!localStorage.getItem('user')) {
-      createUserId();
-    }
-    axios.get(BASE_URL).then((response) => {
+  const fetchMessage = async () => {
+    try {
+      const response = await axios.get(BASE_URL);
       setMessages(response.data);
-    });
+      setLastMessage(response.data[response.data.length - 1]);
+    } catch (error) {
+      alert('Error! ' + error);
+    }
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem('user')) {
+      setShowModal(false);
+    }
+    void fetchMessage();
   }, []);
 
-  // const sendMessage = () => {
-  //   setMessage(prevState => ({
-  //     ...prevState,
-  //
-  //   }))
-  // };
 
-  if (messages.length === 0) {
-    return (
-      <p>Loading...</p>
-    );
-  }
 
+  useEffect(() => {
+    const getLastMessage = async () => {
+      try {
+        await axios.get(BASE_URL + `?datetime=${lastMessage?.datetime}`);
+      } catch (error) {
+        alert('Error! ' + error);
+      }
+    };
+
+    const updateLastMessage = setInterval(() => {
+      if (messages.length !== 0) {
+        void getLastMessage();
+      }
+    }, 3000);
+
+    return () => clearInterval(updateLastMessage);
+  }, [lastMessage?.datetime, messages]);
+
+
+  const sendMessage = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const data = new URLSearchParams();
+    data.set('message', textMessage);
+    data.set('author', author ? author : JSON.parse(localStorage.getItem('user') || ''));
+
+    try {
+      await axios.post(BASE_URL, data).then(() => setTextMessage(''));
+    } catch (error) {
+      alert('Error! ' + error);
+    }
+    await fetchMessage();
+  };
 
   return (
     <>
@@ -85,7 +113,12 @@ const App = () => {
         </form>
       </Modal>
       <Header/>
-      <ChatWindow textMessage={textMessage} changeText={textMessageChange} messages={messages}/>
+      <ChatWindow
+        textMessage={textMessage}
+        changeText={textMessageChange}
+        messages={messages}
+        sendMessage={sendMessage}
+      />
     </>
   );
 };
